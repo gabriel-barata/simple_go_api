@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	utils.LoadEnvFile()
 
 	server := gin.Default()
@@ -32,6 +31,7 @@ func main() {
 
 	server.GET("/products", productController.GetProducts)
 	server.POST("/product", productController.InsertProduct)
+	server.GET("/product/:productId", productController.GetProductById)
 
 	server.Run(":8000")
 }

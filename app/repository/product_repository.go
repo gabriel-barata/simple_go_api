@@ -72,3 +72,31 @@ func (pr *ProductRepository) InsertProduct(product models.Product) (int, error) 
 
 	return id, nil
 }
+
+func (pr *ProductRepository) GetProductById(productId int) (*models.Product, error) {
+	var product models.Product
+
+	query, err := pr.connection.Prepare(
+		"SELECT * FROM products WHERE id = $1",
+	)
+	if err != nil {
+		log.Fatalf("Unable to prepare query: %v", err)
+		return nil, err
+	}
+
+	err = query.QueryRow(productId).Scan(
+		&product.ID,
+		&product.Name,
+		&product.Price,
+	)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
+		log.Fatalf("Unable to parse query result into models.Product: %v", err)
+		return nil, err
+	}
+	query.Close()
+
+	return &product, nil
+}

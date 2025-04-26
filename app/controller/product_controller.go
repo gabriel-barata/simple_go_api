@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"simple-go-api/app/models"
 	"simple-go-api/app/usecase"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -44,5 +45,41 @@ func (p *productController) InsertProduct(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusCreated, insertedProduct)
+
+}
+
+func (p *productController) GetProductById(ctx *gin.Context) {
+	id := ctx.Param("productId")
+	if id == "" {
+		response := models.Response{
+			Message: "Product It Cannot Be Null",
+		}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+	if err != nil {
+		response := models.Response{
+			Message: "Value Is Not An Integer",
+		}
+		ctx.JSON(http.StatusInternalServerError, response)
+		return
+	}
+
+	product, err := p.productUsecase.GetProductById(productId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+	}
+
+	if product == nil {
+		response := models.Response{
+			Message: "Product Not Found On Database",
+		}
+		ctx.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	ctx.JSON(http.StatusAccepted, product)
 
 }
