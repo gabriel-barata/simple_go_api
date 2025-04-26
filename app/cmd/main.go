@@ -2,6 +2,9 @@ package main
 
 import (
 	"simple-go-api/app/controller"
+	"simple-go-api/app/db"
+	"simple-go-api/app/repository"
+	"simple-go-api/app/usecase"
 
 	"github.com/gin-gonic/gin"
 )
@@ -9,8 +12,14 @@ import (
 func main() {
 
 	server := gin.Default()
+	dbConnection, _ := db.ConnectDB()
 
-	productController := controller.NewProductController()
+	// Repository layer
+	productRepository := repository.NewProductRepository(dbConnection)
+	// UseCase Layer
+	productUsecase := usecase.NewProductUseCase(productRepository)
+	// Controller Layer
+	productController := controller.NewProductController(productUsecase)
 
 	server.GET("/ping", func(ctx *gin.Context) {
 		ctx.JSON(200, gin.H{
