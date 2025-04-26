@@ -5,11 +5,14 @@ import (
 	"simple-go-api/app/db"
 	"simple-go-api/app/repository"
 	"simple-go-api/app/usecase"
+	"simple-go-api/app/utils"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
+
+	utils.LoadEnvFile()
 
 	server := gin.Default()
 	dbConnection, _ := db.ConnectDB()

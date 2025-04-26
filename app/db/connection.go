@@ -8,15 +8,12 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	HOST     = os.Getenv("DATABASE_HOST")
-	PORT     = os.Getenv("DATABASE_PORT")
-	USER     = os.Getenv("DATABASE_USER")
-	PASSWORD = os.Getenv("DATABASE_PASSWORD")
-	DB_NAME  = os.Getenv("DATABASE_NAME")
-)
-
 func ConnectDB() (*sql.DB, error) {
+	HOST := os.Getenv("DATABASE_HOST")
+	PORT := os.Getenv("DATABASE_PORT")
+	USER := os.Getenv("DATABASE_USER")
+	PASSWORD := os.Getenv("DATABASE_PASSWORD")
+	DB_NAME := os.Getenv("DATABASE_NAME")
 
 	var psqlInfo string = fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
