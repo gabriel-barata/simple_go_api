@@ -3,6 +3,7 @@ package repository
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"simple-go-api/app/models"
 )
 
@@ -47,4 +48,27 @@ func (pr *ProductRepository) GetProducts() ([]models.Product, error) {
 
 	return productList, nil
 
+}
+
+func (pr *ProductRepository) InsertProduct(product models.Product) (int, error) {
+	var id int
+
+	query, err := pr.connection.Prepare(
+		"INSERT INTO products (product_name, price) VALUES ($1, $2) RETURNING id",
+	)
+
+	if err != nil {
+		log.Fatalf("Unable to prepare insert query: $%v", err)
+		return id, err
+	}
+
+	err = query.QueryRow(product.Name, product.Price).Scan(&id) // pointing to id(var) memory address
+	if err != nil {
+		log.Fatalf("Unable to insert values on table: %v", err)
+		return id, err
+	}
+
+	query.Close()
+
+	return id, nil
 }
